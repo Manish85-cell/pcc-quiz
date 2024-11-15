@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud Computing Exam Platform</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        button {
+            padding: 10px 15px;
+            margin: 10px 5px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .question {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #f9f9f9;
+        }
+        .timer {
+            font-size: 20px;
+            margin: 10px 0;
+            color: #d9534f;
+        }
+        .feedback {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #28a745;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Cloud Computing Exam Platform</h1>
+    <button id="startSinglePart">Start Single Part Exam</button>
+    <button id="startSingleQuestion">Start Single Question Exam</button>
+    <button id="startPYQ">Start PYQ Exam</button>
+    
+    <div id="examArea" style="display:none;">
+        <div class="timer" id="timer"></div>
+        <div id="questionArea"></div>
+        <button id="prevButton" style="display:none;">Previous Question</button>
+        <button id="nextButton" style="display:none;">Next Question</button>
+        <button id="submitButton" style="display:none;">Submit Exam</button>
+        <div class="feedback" id="feedback" style="display:none;"></div>
+    </div>
+</div>
+
+<script>
+    let questions = [];
+    let currentQuestionIndex = 0;
+    let currentPartIndex = 0;
+    let totalMarks = 0;
+    let totalQuestions = 0;
+    let timer;
+    let timeLimit;
+    let selectedQuestions = [];
+
+    // Load questions from JSON file
+    async function loadQuestions() {
+        const response = await fetch('pcc_2022.json');
+        const data = await response.json();
+        questions = data.questions;
+    }
+
+    // Start the single part exam
+    function startSinglePartExam() {
+        document.getElementById('examArea').style.display = 'block';
+        totalQuestions = 3; // 3 questions in single part
+        currentPartIndex = 0;
+        showSinglePartQuestions();
+        timeLimit = 30 * 60; // 30 minutes for single part
+        startTimer();
+    }
+
+    // Start the single question exam
+    function startSingleQuestionExam() {
+        document.getElementById('examArea').style.display = 'block';
+        totalQuestions = 1; // 1 question in single question exam
+        currentQuestionIndex = Math.floor(Math.random() * questions.length); // Random question
+        showSingleQuestion();
+        timeLimit = 15 * 60; // 15 minutes for single question
+        startTimer();
+    }
+
+    // Start the PYQ exam
+    function startPYQExam() {
+        document.getElementById('examArea').style.display = 'block';
+        totalQuestions = 10; // 5 parts, 2 questions each
+        currentPartIndex = 0;
+        selectedQuestions = Array.from({length: 5}, () => []);
+        showPYQQuestions();
+        timeLimit = 3 * 60 * 60; // 3 hours for PYQ exam
+        startTimer();
+    }
+
+    function showSinglePartQuestions() {
+        document.getElementById('questionArea').innerHTML = `
+            <div class="question">
+                <strong>Part 1:</strong> Select 2 questions from the following:
+                <ul>
+                    ${questions.slice(0, 3).map(q => `<li>${q.question_number}: ${q.question_text} (${q.marks} marks)</li>`).join('')}
+                </ul>
+            </div>
+        `;
+        document.getElementById('nextButton').style.display = 'block';
+        document.getElementById('prevButton').style.display = 'none';
+        document.getElementById('submitButton').style.display = 'none';
+    }
+
+    function showSingleQuestion() {
+        const question = questions[currentQuestionIndex];
+        document.getElementById('questionArea').innerHTML = `
+            <div class="question">
+                <strong>${question.question_number}:</strong> ${question.question_text} (${question.marks} marks)
+            </div>
+        `;
+        document.getElementById('nextButton').style.display = 'none';
+        document.getElementById('prevButton').style.display = 'none';
+        document.getElementById('submitButton').style.display = 'block';
+    }
+
+    function showPYQQuestions() {
+        if (currentPartIndex < 5) {
+            const start = currentPartIndex * 3;
+            const partQuestions = questions.slice(start, start + 3);
+            document.getElementById('questionArea').innerHTML = `
+                <div class="question">
+                    <strong>Part ${currentPartIndex + 1}:</strong> Select 2 questions from the following:
+                    <ul>
+                        ${partQuestions.map(q => `<li>${q.question_number}: ${q.question_text} (${q.marks} marks)</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+            document.getElementById('nextButton').style.display = 'block';
+            document.getElementById('prevButton').style.display = currentPartIndex > 0 ? 'block' : 'none';
+            document.getElementById('submitButton').style.display = 'none';
+        } else {
+            completePYQ();
+        }
+    }
+
+    function startTimer() {
+        let time = timeLimit;
+        timer = setInterval(() => {
+            const minutes = Math.floor(time / 60);
+            const seconds = time % 60;
+            document.getElementById('timer').innerText = `Time Remaining: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+            time--;
+            if (time < 0) {
+                clearInterval(timer);
+                document.getElementById('feedback').innerText = "Time's up! Exam submitted.";
+                document.getElementById('feedback').style.display = 'block';
+                document.getElementById('nextButton').style.display = 'none';
+                document.getElementById('prevButton').style.display = 'none';
+                document.getElementById('submitButton').style.display = 'block';
+            }
+        }, 1000);
+    }
+
+    function completePYQ() {
+        clearInterval(timer);
+        document.getElementById('feedback').innerText = "PYQ Exam completed! You selected questions from all parts.";
+        document.getElementById('feedback').style.display = 'block';
+        document.getElementById('nextButton').style.display = 'none';
+        document.getElementById('prevButton').style.display = 'none';
+        document.getElementById('submitButton').style.display = 'block';
+    }
+
+    document.getElementById('startSinglePart').addEventListener('click', async () => {
+        await loadQuestions();
+        startSinglePartExam();
+    });
+
+    document.getElementById('startSingleQuestion').addEventListener('click', async () => {
+        await loadQuestions();
+        startSingleQuestionExam();
+    });
+
+    document.getElementById('startPYQ').addEventListener('click', async () => {
+        await loadQuestions();
+        startPYQExam();
+    });
+
+    document.getElementById('nextButton').addEventListener('click', () => {
+        if (currentPartIndex < 5) {
+            selectedQuestions[currentPartIndex] = true; // Mark part as answered
+            currentPartIndex++;
+            showPYQQuestions();
+        } else {
+            clearInterval(timer);
+            document.getElementById('feedback').innerText = "Exam completed! You answered questions from all parts.";
+            document.getElementById('feedback').style.display = 'block';
+            document.getElementById('nextButton').style.display = 'none';
+            document.getElementById('prevButton').style.display = 'none';
+            document.getElementById('submitButton').style.display = 'block';
+        }
+    });
+
+    document.getElementById('prevButton').addEventListener('click', () => {
+        if (currentPartIndex > 0) {
+            currentPartIndex--;
+            showPYQQuestions();
+        }
+    });
+
+    document.getElementById('submitButton').addEventListener('click', () => {
+        clearInterval(timer);
+        document.getElementById('feedback').innerText = "Exam submitted! You completed the exam.";
+        document.getElementById('feedback').style.display = 'block';
+        document.getElementById('nextButton').style.display = 'none';
+        document.getElementById('prevButton').style.display = 'none';
+    });
+</script>
+
+</body>
+</html>
