@@ -1,0 +1,85 @@
+{
+    "subject": "Computer Organization",
+    "year": "2023",
+    "course_code": "CSYCL/CICSC/CHCL/CPCL, 2023",
+    "questions": [
+        {
+            "question_number": "Q1a",
+            "question_text": "What do you understand by the term translator. Differentiate between Interpreter and Compiler. Describe analysis synthesis model of compiler.",
+            "marks": 4,
+            "CO": "CO1"
+        },
+        {
+            "question_number": "Q1b",
+            "question_text": "How type checking is performed and implemented in compiler.",
+            "marks": 4,
+            "CO": "CO1"
+        },
+        {
+            "question_number": "Q2a",
+            "question_text": "Consider the regular expression (ab)aba. Construct minimum state DFA for this regular expression and describe the language this regular expression denotes.",
+            "marks": 4,
+            "CO": "CO1"
+        },
+        {
+            "question_number": "Q2b",
+            "question_text": "What is the role of lexical analysis phase in a compiler. Explain the benefit of an example, like Lexeme, Token and Pattern.",
+            "marks": 4,
+            "CO": "CO1"
+        },
+        {
+            "question_number": "Q3a",
+            "question_text": "Why tactical analysis and syntax analysis are implemented as two different phases in compiler. Explain the drawbacks of top-down parsing.",
+            "marks": 4,
+            "CO": "CO1"
+        },
+        {
+            "question_number": "Q3b",
+            "question_text": "Construct CLR parsing table for the following grammar:\nE -> E + E | E - E | id",
+            "marks": 4,
+            "CO": "CO1"
+        },
+        {
+            "question_number": "Q3c",
+            "question_text": "Show the stack moves for the input id + id + id\nConstruct the LR(0) parsing table for the following grammar:\nA -> a B C\nB -> b | ε\nC -> c | ε",
+            "marks": 4,
+            "CO": "CO1"
+        },
+        {
+            "question_number": "Q4a",
+            "question_text": "Explain how error recovery is performed in LR parsers with the help of an example.",
+            "marks": 4,
+            "CO": "CO1"
+        },
+        {
+            "question_number": "Q4b",
+            "question_text": "Translate the following expression in Three-address code as Quadruples, Triples and Indirect Triples:\nx/y + (x-y)^2",
+            "marks": 4,
+            "CO": "CO1"
+        },
+        {
+            "question_number": "Q4c",
+            "question_text": "Represent the given expression as syntax tree and DAG also.\nWhat is Syntax Directed Translation. Explain the difference among S-attribute and L-attribute? Write the semantic rules for the following grammar showing appropriate attributes:\nS -> L = R\nL -> id\nR -> E\nE -> E + T | T\nT -> T * F | F\nF -> id",
+            "marks": 4,
+            "CO": "CO1"
+        },
+        {
+            "question_number": "Q5a",
+            "question_text": "Consider the following code. Write the Three address statement for this code, find basic blocks and draw flow graph for the same.\nint i;\nwhile i<20 do\n if x>y then\n x=x+1;\n else\n y=y+1;",
+            "marks": 4,
+            "CO": "CO5"
+        },
+        {
+            "question_number": "Q5b",
+            "question_text": "What is code optimization. Differentiate between local and global code optimization.",
+            "marks": 4,
+            "CO": "CO5"
+        },
+        {
+            "question_number": "Q5c",
+            "question_text": "Generate the following expression using labelling algorithm and code generation for labelled (with Untinal algorithm).\n(A+B) + (C-D) + (EF)",
+            "marks": 4,
+            "CO": "CO5"
+        }
+    ]
+}
